@@ -1,5 +1,7 @@
 import tkinter as tk  # используем библиотеку tkinter и  даём ей псевдоним tk
 
+from MyButton import *
+
 
 class MineSweeper:
     """
@@ -7,16 +9,16 @@ class MineSweeper:
     :return:
     """
     window = tk.Tk()
-    row = 10                                                            # ряды
-    columns = 10                                                        # колонки
+    row = 10  # ряды
+    columns = 10  # колонки
 
     def __init__(self):
         print('start MineSweeper')
-        self.buttons = []                                               # массив кнопок
-        for i in range(MineSweeper.row):                                # перебираем по рядам
+        self.buttons = []  # массив кнопок
+        for i in range(MineSweeper.row):  # перебираем по рядам
             temp = []
-            for j in range(MineSweeper.columns):                        # перебираем по колонкам
-                btn = tk.Button(MineSweeper.window, width=3, height=3)  # ширина кнопок и высота font='Calibri 15 bold'
+            for j in range(MineSweeper.columns):  # перебираем по колонкам
+                btn = MyButton(MineSweeper.window, x=i, y=j)  # ширина кнопок и высота font='Calibri 15 bold'
                 temp.append(btn)
             self.buttons.append(temp)
 
@@ -48,9 +50,5 @@ class MineSweeper:
             print(row_btn)
 
 
-game = MineSweeper()                                                  # запуск класса
-game.start()                                                          # в момент запуска - запускается mainloop
-
-
-
-
+game = MineSweeper()  # запуск класса
+game.start()  # в момент запуска - запускается mainloop
