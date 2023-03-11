@@ -13,7 +13,7 @@ class MyButton(tk.Button):
         Переопределяем класс Button под себя.
         :return:
         """
-        super(MyButton, self).__init__(master, width=3, height=3, font='Calibri 15', *args,
+        super(MyButton, self).__init__(master, width=2, height=2, *args,
                                        **kwargs)  # делаем своего рода конструктор
         self.x = x  # координата по х
         self.y = y  # координата по y
