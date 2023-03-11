@@ -22,9 +22,23 @@ class MineSweeper:
             temp = []
             for j in range(MineSweeper.columns):  # перебираем по колонкам
                 btn = MyButton(MineSweeper.window, x=i, y=j, namber=count)
+                btn.config(command=lambda button=btn: self.click(
+                    button))  # функция lamda является проводником для вызова функции click
                 temp.append(btn)
                 count += 1
             self.buttons.append(temp)
+
+    def click(self, clicked_button: MyButton):
+        # print(clicked_button)
+        """
+        Метод обработки нажатия кнопок.
+        :return:
+        """
+        if clicked_button.is_mine:
+            clicked_button.config(text="*",background='blue', disabledforeground='black')
+        else:
+            clicked_button.config(text=clicked_button.number, disabledforeground='black')
+        clicked_button.config(state='disabled')
 
     def create_widgets(self):
         """
