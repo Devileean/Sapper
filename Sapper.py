@@ -2,15 +2,25 @@ from MyButton import *
 from random import shuffle
 
 
+colors = {
+    1: '#cc103f',
+    2: '#0ccfcf',
+    3: '#0f6bdb',
+    4: '#c606d4',
+    5: '#d3d60d',
+    6: '#ed8224',
+    7: '#5cc406',
+    8: '#6f3dc4'
+}
 class MineSweeper:
     """
     Основной класс игры сапёр.
     :return:
     """
     window = tk.Tk()
-    row = 5  # ряды
-    columns = 5  # колонки
-    mines = 10  # мины
+    row = 10  # ряды
+    columns = 10  # колонки
+    mines = 20  # мины
 
     def __init__(self):
         print('start MineSweeper')
@@ -56,8 +66,10 @@ class MineSweeper:
                 btn = self.buttons[i][j]
                 if btn.is_mine:
                     btn.config(text="*", background='blue', disabledforeground='black')
-                else:
-                    btn.config(text=btn.count_bomb, disabledforeground='black')
+                elif btn.count_bomb in colors:
+                    color = colors.get(btn.count_bomb, 'black')
+                    btn.config(text=btn.count_bomb, fg=color)
+
 
     def start(self):
         """
