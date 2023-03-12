@@ -41,8 +41,8 @@ class MineSweeper:
         Метод интерфейса игры.
         :return:
         """
-        for i in range(MineSweeper.row + 2):
-            for j in range(MineSweeper.columns + 2):
+        for i in range(1, MineSweeper.row + 1):
+            for j in range(1, MineSweeper.columns + 1):
                 btn = self.buttons[i][j]  # обращаемся к колонке по индексу
                 btn.grid(row=i, column=j)
 
