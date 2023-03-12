@@ -15,9 +15,9 @@ class MineSweeper:
     def __init__(self):
         print('start MineSweeper')
         self.buttons = []  # массив кнопок
-        for i in range(MineSweeper.row+2):  # перебираем по рядам
+        for i in range(MineSweeper.row + 2):  # перебираем по рядам
             temp = []
-            for j in range(MineSweeper.columns+2):  # перебираем по колонкам
+            for j in range(MineSweeper.columns + 2):  # перебираем по колонкам
                 btn = MyButton(MineSweeper.window, x=i, y=j)
                 btn.config(command=lambda button=btn: self.click(
                     button))  # функция lamda является проводником для вызова функции click
@@ -41,8 +41,8 @@ class MineSweeper:
         Метод интерфейса игры.
         :return:
         """
-        for i in range(MineSweeper.row+2):
-            for j in range(MineSweeper.columns+2):
+        for i in range(MineSweeper.row + 2):
+            for j in range(MineSweeper.columns + 2):
                 btn = self.buttons[i][j]  # обращаемся к колонке по индексу
                 btn.grid(row=i, column=j)
 
@@ -51,14 +51,13 @@ class MineSweeper:
         временный метод для визуализации.
         :return:
         """
-        for i in range(MineSweeper.row+2):
-            for j in range(MineSweeper.columns+2):
+        for i in range(MineSweeper.row + 2):
+            for j in range(MineSweeper.columns + 2):
                 btn = self.buttons[i][j]
                 if btn.is_mine:
                     btn.config(text="*", background='blue', disabledforeground='black')
                 else:
-                    btn.config(text=btn.number, disabledforeground='black')
-
+                    btn.config(text=btn.count_bomb, disabledforeground='black')
 
     def start(self):
         """
@@ -67,6 +66,7 @@ class MineSweeper:
         """
         self.create_widgets()  # вызываем виджеты
         self.insert_mines()  # вызываем мины
+        self.count_mines_in_buttons()
         self.print_buttons()  # вызываем кнопки
         self.open_all_buttons()
         MineSweeper.window.mainloop()
@@ -86,13 +86,32 @@ class MineSweeper:
          """
         index_mines = self.get_mines_places()
         count = 1  # добавляем счетчик
-        for i in range(1, MineSweeper.row+1):  # обходим псевдо ряды
-            for j in range(1, MineSweeper.columns+1):  # обходим псевдо колонки
+        for i in range(1, MineSweeper.row + 1):  # обходим псевдо ряды
+            for j in range(1, MineSweeper.columns + 1):  # обходим псевдо колонки
                 btn = self.buttons[i][j]  # обращаемся к колонке по индексу
                 btn.number = count
                 if btn.number in index_mines:  # если у номер кнопки совпадает с номером индекса мины
                     btn.is_mine = True
                 count += 1
+
+    def count_mines_in_buttons(self):
+        """
+         Метод подсчета мин в потолках с вложенным циклом.
+
+         :return:
+         """
+        for i in range(1, MineSweeper.row + 1):
+            for j in range(1, MineSweeper.columns + 1):
+                btn = self.buttons[i][j]
+                count_bomb = 0
+                if not btn.is_mine:  # not создает отрицание
+                    for row_dx in [-1, 0, 1]:  # вложенный цикл
+                        for columns_dx in [-1, 0, 1]:
+                            neighbour = self.buttons[i + row_dx][
+                                j + columns_dx]  # переменная для получения всех соседних кнопок
+                            if neighbour.is_mine:
+                                count_bomb += 1
+                btn.count_bomb = count_bomb
 
     @staticmethod
     def get_mines_places():
