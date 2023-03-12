@@ -19,6 +19,7 @@ class MyButton(tk.Button):
         self.y = y  # координата по y
         self.number = namber  # каждая кнопка будет иметь свой номер
         self.is_mine = False
+        self.count_bomb = 0
 
     def __repr__(self):
         """
