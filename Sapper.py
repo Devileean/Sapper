@@ -41,7 +41,7 @@ class MineSweeper:
         :return:
         """
         if clicked_button.is_mine:
-            clicked_button.config(text="*", background='blue', disabledforeground='black')
+            clicked_button.config(text="*", bg='blue', disabledforeground='black')
         else:
             clicked_button.config(text=clicked_button.number, disabledforeground='black')
         clicked_button.config(state='disabled')
@@ -65,7 +65,7 @@ class MineSweeper:
             for j in range(MineSweeper.columns + 2):
                 btn = self.buttons[i][j]
                 if btn.is_mine:
-                    btn.config(text="*", background='blue', disabledforeground='black')
+                    btn.config(text="*", highlightbackground='blue', disabledforeground='black')
                 elif btn.count_bomb in colors:
                     color = colors.get(btn.count_bomb, 'black')
                     btn.config(text=btn.count_bomb, fg=color)
