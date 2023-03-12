@@ -74,11 +74,17 @@ class MineSweeper:
     def print_buttons(self):
         """
          Метод распечатки кнопок игры сапёр.
+         Помогает смотреть вывод игрового поля в консоли.
          :return:
          """
-        for row_btn in self.buttons:
-            print(row_btn)
-
+        for i in range(1, MineSweeper.row + 1):
+            for j in range(1, MineSweeper.columns + 1):
+                btn = self.buttons[i][j]
+                if btn.is_mine:
+                    print('*', end=' ')  # параметром end= убераем переносы строк
+                else:
+                    print(btn.count_bomb, end=' ')
+            print()  #  делаем пустой принт чтобы разделить вывод информации по рядам
     def insert_mines(self):
         """
          Метод расставления мин.
