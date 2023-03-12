@@ -2,7 +2,7 @@ from MyButton import *
 from random import shuffle
 
 
-colors = {
+colors = {  #  переменная для хранения словаря для присвоения цвета цифрам
     1: '#cc103f',
     2: '#0ccfcf',
     3: '#0f6bdb',
