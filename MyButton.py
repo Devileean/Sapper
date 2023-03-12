@@ -8,7 +8,7 @@ class MyButton(tk.Button):
     :return:
     """
 
-    def __init__(self, master, namber, x, y, *args, **kwargs):
+    def __init__(self, master, x, y, namber=0, *args, **kwargs):
         """
         Переопределяем класс Button под себя.
         :return:
