@@ -8,7 +8,7 @@ class MyButton(tk.Button):
     :return:
     """
 
-    def __init__(self, master, x, y, namber=0, *args, **kwargs):
+    def __init__(self, master, x, y, number=0, *args, **kwargs):
         """
         Переопределяем класс Button под себя.
         :return:
@@ -17,7 +17,7 @@ class MyButton(tk.Button):
                                        **kwargs)  # делаем своего рода конструктор
         self.x = x  # координата по х
         self.y = y  # координата по y
-        self.number = namber  # каждая кнопка будет иметь свой номер
+        self.number = number  # каждая кнопка будет иметь свой номер
         self.is_mine = False
         self.count_bomb = 0
 

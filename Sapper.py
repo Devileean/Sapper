@@ -40,11 +40,17 @@ class MineSweeper:
         Метод обработки нажатия кнопок.
         :return:
         """
+        green = (0, 255, 0)
         if clicked_button.is_mine:
-            clicked_button.config(text="*", bg='blue', disabledforeground='black')
+            clicked_button.config(text="*", disabledforeground='black')
         else:
-            clicked_button.config(text=clicked_button.number, disabledforeground='black')
+            color = colors.get(clicked_button.count_bomb, 'black')
+            if clicked_button.count_bomb:
+                clicked_button.config(text=clicked_button.count_bomb, disabledforeground=color)
+            else:
+                clicked_button.config(text='', disabledforeground=color)
         clicked_button.config(state='disabled')
+        # clicked_button.config(relief=tk.SUNKEN)
 
     def create_widgets(self):
         """
@@ -80,7 +86,7 @@ class MineSweeper:
         self.insert_mines()  # вызываем мины
         self.count_mines_in_buttons()
         self.print_buttons()  # вызываем кнопки
-        self.open_all_buttons()
+        # self.open_all_buttons()
         MineSweeper.window.mainloop()
 
     def print_buttons(self):
