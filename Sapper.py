@@ -1,8 +1,7 @@
 from MyButton import *
 from random import shuffle
 
-
-colors = {  #  переменная для хранения словаря для присвоения цвета цифрам
+colors = {  # переменная для хранения словаря для присвоения цвета цифрам
     1: '#cc103f',
     2: '#0ccfcf',
     3: '#0f6bdb',
@@ -12,6 +11,8 @@ colors = {  #  переменная для хранения словаря дл�
     7: '#5cc406',
     8: '#6f3dc4'
 }
+
+
 class MineSweeper:
     """
     Основной класс игры сапёр.
@@ -35,22 +36,53 @@ class MineSweeper:
             self.buttons.append(temp)
 
     def click(self, clicked_button: MyButton):
-        # print(clicked_button)
         """
         Метод обработки нажатия кнопок.
         :return:
         """
-        green = (0, 255, 0)
+
         if clicked_button.is_mine:
             clicked_button.config(text="*", disabledforeground='black')
+            clicked_button.is_open = True
         else:
             color = colors.get(clicked_button.count_bomb, 'black')
             if clicked_button.count_bomb:
                 clicked_button.config(text=clicked_button.count_bomb, disabledforeground=color)
+                clicked_button.is_open = True
             else:
-                clicked_button.config(text='', disabledforeground=color)
+                self.breadth_first_search(clicked_button)
         clicked_button.config(state='disabled')
-        # clicked_button.config(relief=tk.SUNKEN)
+        clicked_button.config(relief=tk.SUNKEN)
+
+    def breadth_first_search(self, btn: MyButton):
+        """
+        Метод поиск в ширину.
+        :return:
+        """
+        queue = [btn]  # создаем очередь
+        while queue:
+            current_btn = queue.pop()  # создаем переменную дя текущей кнопки
+            color = colors.get(current_btn.count_bomb, 'black')
+            if current_btn.count_bomb:
+                current_btn.config(text=current_btn.count_bomb, disabledforeground=color)
+            else:
+                current_btn.config(text='', disabledforeground=color)
+            current_btn.is_open = True
+            current_btn.config(state='disabled')
+            current_btn.config(relief=tk.SUNKEN)
+
+            if current_btn.count_bomb == 0:
+                x = current_btn.x
+                y = current_btn.y
+                for dx in [-1, 0, 1]:
+                    for dy in [-1, 0, 1]:
+                        if not abs(dx - dy) == 1:
+                            continue
+
+                        next_btn = self.buttons[x + dx][y + dy]
+                        if not next_btn.is_open and 1 <= next_btn.x <= MineSweeper.row and \
+                                1 <= next_btn.y <= MineSweeper.columns and next_btn not in queue:
+                            queue.append(next_btn)
 
     def create_widgets(self):
         """
@@ -75,7 +107,6 @@ class MineSweeper:
                 elif btn.count_bomb in colors:
                     color = colors.get(btn.count_bomb, 'black')
                     btn.config(text=btn.count_bomb, fg=color)
-
 
     def start(self):
         """
@@ -102,7 +133,8 @@ class MineSweeper:
                     print('*', end=' ')  # параметром end= убераем переносы строк
                 else:
                     print(btn.count_bomb, end=' ')
-            print()  #  делаем пустой принт чтобы разделить вывод информации по рядам
+            print()  # делаем пустой принт чтобы разделить вывод информации по рядам
+
     def insert_mines(self):
         """
          Метод расставления мин.
