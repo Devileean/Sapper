@@ -20,6 +20,7 @@ class MyButton(tk.Button):
         self.number = number  # каждая кнопка будет иметь свой номер
         self.is_mine = False
         self.count_bomb = 0
+        self.is_open = False  # указывает нам открывали ли мы кнопку
 
     def __repr__(self):
         """
