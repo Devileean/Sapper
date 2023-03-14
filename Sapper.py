@@ -2,7 +2,6 @@ from MyButton import *
 from random import shuffle
 from tkinter.messagebox import showinfo  # позволят создавать диалоговое окно
 
-
 colors = {  # переменная для хранения словаря для присвоения цвета цифрам
     1: '#cc103f',
     2: '#0ccfcf',
@@ -44,6 +43,9 @@ class MineSweeper:
         Метод обработки нажатия кнопок.
         :return:
         """
+        if MineSweeper.is_game_over:
+            return
+
         if MineSweeper.is_first_click:
             self.insert_mines(clicked_button.number)  # вызываем мины
             self.count_mines_in_buttons()
@@ -51,9 +53,10 @@ class MineSweeper:
             MineSweeper.is_first_click = False
 
         if clicked_button.is_mine:
-            clicked_button.config(text="*", disabledforeground='black')
+            clicked_button.config(text="*", background='red', disabledforeground='black')
             clicked_button.is_open = True
-            showinfo('game over', 'YOU LOOSE')
+            MineSweeper.is_game_over = True
+            showinfo('game over', 'Вы проиграли')
             for i in range(1, MineSweeper.row + 1):  # этот цикл открывает все мины при подрыве
                 for j in range(1, MineSweeper.columns + 1):
                     btn = self.buttons[i][j]
@@ -64,7 +67,6 @@ class MineSweeper:
             if clicked_button.count_bomb:
                 clicked_button.config(text=clicked_button.count_bomb, disabledforeground=color)
                 clicked_button.is_open = True
-                MineSweeper.is_game_over = True
             else:
                 self.breadth_first_search(clicked_button)
         clicked_button.config(state='disabled')
@@ -105,6 +107,15 @@ class MineSweeper:
         Метод интерфейса игры.
         :return:
         """
+        menu_bar = tk.Menu(self.window)
+        self.window.config(menu=menu_bar)
+
+        setting_menu = tk.Menu(menu_bar, tearoff=0)
+        setting_menu.add_command(label='Играть')
+        setting_menu.add_command(label='Настройки')
+        setting_menu.add_command(label='Выход', command=self.window.destroy)
+        menu_bar.add_cascade(label='Файл', menu=setting_menu)
+
         count = 1  # добавляем счетчик
         for i in range(1, MineSweeper.row + 1):
             for j in range(1, MineSweeper.columns + 1):
