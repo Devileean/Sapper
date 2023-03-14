@@ -1,5 +1,7 @@
 from MyButton import *
 from random import shuffle
+from tkinter.messagebox import showinfo  # позволят создавать диалоговое окно
+
 
 colors = {  # переменная для хранения словаря для присвоения цвета цифрам
     1: '#cc103f',
@@ -22,6 +24,8 @@ class MineSweeper:
     row = 10  # ряды
     columns = 10  # колонки
     mines = 20  # мины
+    is_game_over = False  # если подрыв или конец игры
+    is_first_click = True  # чтобы исключить мину при первом нажатии
 
     def __init__(self):
         print('start MineSweeper')
@@ -40,15 +44,27 @@ class MineSweeper:
         Метод обработки нажатия кнопок.
         :return:
         """
+        if MineSweeper.is_first_click:
+            self.insert_mines(clicked_button.number)  # вызываем мины
+            self.count_mines_in_buttons()
+            self.print_buttons()  # вызываем кнопки
+            MineSweeper.is_first_click = False
 
         if clicked_button.is_mine:
             clicked_button.config(text="*", disabledforeground='black')
             clicked_button.is_open = True
+            showinfo('game over', 'YOU LOOSE')
+            for i in range(1, MineSweeper.row + 1):  # этот цикл открывает все мины при подрыве
+                for j in range(1, MineSweeper.columns + 1):
+                    btn = self.buttons[i][j]
+                    if btn.is_mine:
+                        btn['text'] = '*'
         else:
             color = colors.get(clicked_button.count_bomb, 'black')
             if clicked_button.count_bomb:
                 clicked_button.config(text=clicked_button.count_bomb, disabledforeground=color)
                 clicked_button.is_open = True
+                MineSweeper.is_game_over = True
             else:
                 self.breadth_first_search(clicked_button)
         clicked_button.config(state='disabled')
@@ -89,10 +105,13 @@ class MineSweeper:
         Метод интерфейса игры.
         :return:
         """
+        count = 1  # добавляем счетчик
         for i in range(1, MineSweeper.row + 1):
             for j in range(1, MineSweeper.columns + 1):
                 btn = self.buttons[i][j]  # обращаемся к колонке по индексу
+                btn.number = count
                 btn.grid(row=i, column=j)
+                count += 1
 
     def open_all_buttons(self):
         """
@@ -114,9 +133,6 @@ class MineSweeper:
         :return:
         """
         self.create_widgets()  # вызываем виджеты
-        self.insert_mines()  # вызываем мины
-        self.count_mines_in_buttons()
-        self.print_buttons()  # вызываем кнопки
         # self.open_all_buttons()
         MineSweeper.window.mainloop()
 
@@ -135,20 +151,17 @@ class MineSweeper:
                     print(btn.count_bomb, end=' ')
             print()  # делаем пустой принт чтобы разделить вывод информации по рядам
 
-    def insert_mines(self):
+    def insert_mines(self, number: int):
         """
          Метод расставления мин.
          :return:
          """
-        index_mines = self.get_mines_places()
-        count = 1  # добавляем счетчик
+        index_mines = self.get_mines_places(number)
         for i in range(1, MineSweeper.row + 1):  # обходим псевдо ряды
             for j in range(1, MineSweeper.columns + 1):  # обходим псевдо колонки
                 btn = self.buttons[i][j]  # обращаемся к колонке по индексу
-                btn.number = count
                 if btn.number in index_mines:  # если у номер кнопки совпадает с номером индекса мины
                     btn.is_mine = True
-                count += 1
 
     def count_mines_in_buttons(self):
         """
@@ -170,13 +183,15 @@ class MineSweeper:
                 btn.count_bomb = count_bomb
 
     @staticmethod
-    def get_mines_places():
+    def get_mines_places(exclude_number: int):
         """
          Метод получения расположения мин.
          Возвращает только индексы мин.
          :return:
          """
         indexes = list(range(1, MineSweeper.columns * MineSweeper.row + 1))
+        print(f'Исключаем кнопку номер {exclude_number}')
+        indexes.remove(exclude_number)
         shuffle(indexes)
         return indexes[:MineSweeper.mines]
 
