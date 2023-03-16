@@ -1,6 +1,8 @@
+import tkinter
+
 from MyButton import *
 from random import shuffle
-from tkinter.messagebox import showinfo  # позволят создавать диалоговое окно
+from tkinter.messagebox import showinfo, showerror  # позволят создавать диалоговое окно
 
 colors = {  # переменная для хранения словаря для присвоения цвета цифрам
     1: '#cc103f',
@@ -62,6 +64,7 @@ class MineSweeper:
                     btn = self.buttons[i][j]
                     if btn.is_mine:
                         btn['text'] = '*'
+                        btn['highlightbackground'] = 'red'
         else:
             color = colors.get(clicked_button.count_bomb, 'black')
             if clicked_button.count_bomb:
@@ -111,6 +114,49 @@ class MineSweeper:
         self.__init__()
         self.create_widgets()
         MineSweeper.is_first_click = True
+        MineSweeper.is_game_over = False
+
+    def create_settings_window(self):
+        """
+        Метод создания отдельного окна с настройками игры.
+        :return:
+        """
+        win_settings = tk.Toplevel(self.window)
+        win_settings.wm_title('Настройки')
+
+        tk.Label(win_settings, text='Количество строк:').grid(row=0, column=0)
+        row_entry = tkinter.Entry(win_settings)
+        row_entry.insert(0, MineSweeper.row)
+        row_entry.grid(row=0, column=1, padx=20, pady=20)
+
+        tk.Label(win_settings, text='Количество колонок:').grid(row=1, column=0)
+        columns_entry = tkinter.Entry(win_settings)
+        columns_entry.insert(0, MineSweeper.columns)
+        columns_entry.grid(row=1, column=1, padx=20, pady=20)
+
+        tk.Label(win_settings, text='Количество мин:').grid(row=2, column=0)
+        mines_entry = tkinter.Entry(win_settings)
+        mines_entry.insert(0, MineSweeper.mines)
+        mines_entry.grid(row=2, column=1, padx=20, pady=20)
+
+        save_btn = tk.Button(win_settings, text='Применить',
+                             command=lambda: self.change_settings(row_entry, columns_entry, mines_entry))
+        save_btn.grid(row=3, column=2, columnspan=2, padx=20, pady=20)
+
+    def change_settings(self, row: tk.Entry, columns: tk.Entry, mines: tk.Entry):
+        """
+        Метод инициализации настроек игры.
+        :return:
+        """
+        try:
+            int(row.get()), int(columns.get()), int(mines.get())
+        except ValueError:
+            showerror('Ошибка', 'Вы ввели неправильное значение!')
+            return
+        MineSweeper.row = int(row.get())
+        MineSweeper.columns = int(columns.get())
+        MineSweeper.mines = int(mines.get())
+        self.reload()
 
     def create_widgets(self):
         """
@@ -122,7 +168,7 @@ class MineSweeper:
 
         setting_menu = tk.Menu(menu_bar, tearoff=0)
         setting_menu.add_command(label='Играть', command=self.reload)
-        setting_menu.add_command(label='Настройки')
+        setting_menu.add_command(label='Настройки', command=self.create_settings_window)
         setting_menu.add_command(label='Выход', command=self.window.destroy)
         menu_bar.add_cascade(label='Файл', menu=setting_menu)
 
@@ -131,7 +177,7 @@ class MineSweeper:
             for j in range(1, MineSweeper.columns + 1):
                 btn = self.buttons[i][j]  # обращаемся к колонке по индексу
                 btn.number = count
-                btn.grid(row=i, column=j, stick='NWES')
+                btn.grid(row=i, column=j, stick='NWSE')
                 count += 1
 
         for i in range(1, MineSweeper.row + 1):
