@@ -37,8 +37,24 @@ class MineSweeper:
                 btn = MyButton(MineSweeper.window, x=i, y=j)
                 btn.config(command=lambda button=btn: self.click(
                     button))  # функция lamda является проводником для вызова функции click
+                btn.bind('<Button-2>', self.right_click)
                 temp.append(btn)
             self.buttons.append(temp)
+
+    def right_click(self, event):
+        """
+        Метод чтобы помечать кнопки флажком правой кнопкой мышки.
+        :return:
+        """
+        if MineSweeper.is_game_over:
+            return
+        current_btn = event.widget
+        if current_btn['state'] == 'normal':
+            current_btn['state'] = 'disabled'
+            current_btn['text'] = '🚩'
+        elif current_btn['text'] == '🚩':
+            current_btn['text'] = ''
+            current_btn['state'] = 'normal'
 
     def click(self, clicked_button: MyButton):
         """
